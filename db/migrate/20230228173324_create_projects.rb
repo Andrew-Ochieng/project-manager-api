@@ -1,4 +1,11 @@
 class CreateProjects < ActiveRecord::Migration[6.1]
   def change
+    create_table :projects do |t|
+      t.string :name
+      t.string :topic
+      t.string :details
+      t.string :user_id
+      t.string :timestamps
+    end
   end
 end
