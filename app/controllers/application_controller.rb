@@ -21,8 +21,7 @@ class ApplicationController < Sinatra::Base
   end
 
 
-  
-  # Add your ro utes here
+  # GET ---------------------------------------------------------------------------# Add your ro utes here
   get "/" do
     { message: "Good luck with your project!" }.to_json
   end
@@ -32,13 +31,55 @@ class ApplicationController < Sinatra::Base
     project.to_json
   end
 
-  get "/project/:id" do
+  get "/projects/:id" do
     project = Project.find(params[:id])
     project.to_json(only: [:name, :topic, :description, :uploaded_file])
   end
 
   get "/users" do
-    "List all users"
+    Project.all.to_json
   end
+
+  get "user/:id" do
+    project = Project.find(params[:id])
+    project.to_json(only: [:name, :topic, :details])
+  end
+
+
+  # POST ---------------------------------------------------------------------------
+  post "/projects" do
+    project = Project.create(project_params)
+    project.to_json
+  end
+
+
+
+
+  # PATCH ---------------------------------------------------------------------------
+  patch "/projects/:id" do
+    project = Project.find_by(id: params[:id])
+    project.update()
+    project.to_json
+  end
+
+
+
+
+
+  # DELETE ---------------------------------------------------------------------------
+  delete "/projects/:id" do
+    project = Project.find(params[:id])
+    project.destroy
+    project.to_json
+  end
+
+
+  # private
+  # def project_params
+    
+  # end
+  
+
+
 
 end
