@@ -1,20 +1,19 @@
 puts "🌱 Seeding users ..."
 
 # Make 10 users
-10.times do
-  User.create(
-      username: Faker::Name.name,
-      email: Faker::Internet.email(name: username)
-      password: Faker::Internet.password(min_length: 8)
-  )
-end
+user = User.create(
+  username: "user"
+  email: "user@user.com"
+  password: "password"
+)
 
-  # Make 50 projects
-50.times do
+# Make 50 projects
+5.times do
   Project.create(
       name: Faker::Team.state,
       topic: Faker::Space.galaxy,
-      details: Faker::Lorem.paragraphs(number: 1, supplemental: true)
+      details: Faker::Lorem.paragraphs(number: 1, supplemental: true),
+      user_id: user.id
   )
 end
 
