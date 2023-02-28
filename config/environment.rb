@@ -12,4 +12,3 @@ require_all 'app'
 ActiveRecord::Base.establish_connection (
     
 )
-
