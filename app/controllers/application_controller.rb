@@ -21,37 +21,82 @@ class ApplicationController < Sinatra::Base
     200
   end
 
+
+
   # GET ---------------------------------------------------------------------------# Add your ro utes here
   def authorized
     User.find(session[:user_id])
   end
 
+  get '/me' do
+    begin
+      authorized.to_json(only: [:id, :username, :password, :first_name, :last_name])
+    rescue ActiveRecord::RecordNotFound => e 
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
+  end
+
   get "/" do
-    authorized
-    { message: "Good luck with your project!" }.to_json
+    begin
+      authorized
+      status 200
+      { message: "Good luck with your project!" }.to_json
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   get "/projects" do
-    authorized
-    projects = Project.all
-    projects.to_json
+    begin
+      user  = authorized
+      user.projects.to_json
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   get "/projects/:id" do
-    authorized
-    project = Project.find(params[:id])
-    project.to_json(only: [:name, :topic, :description, :uploaded_file])
+    begin
+      authorized
+      project = Project.find(params[:id])
+      project.to_json(only: [:name, :topic, :description, :uploaded_file])
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   get "/users" do
-    authorized
-    Project.all.to_json
+    begin
+      authorized
+      status 200
+      users = User.all.to_json(except: [:created_at, :updated_at])
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
-  get "user/:id" do
-    authorized
-    project = Project.find(params[:id])
-    project.to_json(only: [:name, :topic, :details])
+  get "/users/:id" do
+    begin
+      authorized
+      pry
+      user = User.find_by(id: params[:id])
+
+      if(user.nil?)
+        status 404
+        {error: "User not found"}.to_json
+      else
+        status 200
+        user.to_json
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
 
@@ -84,38 +129,44 @@ class ApplicationController < Sinatra::Base
 
 
   post "/projects" do
-    authorized
-    project = Project.create(project_params)
-    project.to_json
+    begin
+      authorized
+      project = Project.create(project_params)
+      project.to_json
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   # PATCH ---------------------------------------------------------------------------
   patch "/projects/:id" do
-    authorized
-    project = Project.find_by(id: params[:id])
-    project.update()
-    project.to_json
+    begin
+      authorized
+      project = Project.find_by(id: params[:id])
+      project.update()
+      project.to_json
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   # DELETE ---------------------------------------------------------------------------
   delete "/projects/:id" do
-    authorized
-    project = Project.find(params[:id])
-    project.destroy
-    project.to_json
+    begin
+      authorized
+      project = Project.find(params[:id])
+      project.destroy
+      
+      head :no_content
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
   end
 
   delete "/logout" do
     session.delete user_id
   end
-
-
-  # private
-  # def project_params
-    
-  # end
-  
-
-
-
 end
