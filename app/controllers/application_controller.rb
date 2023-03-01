@@ -104,8 +104,10 @@ class ApplicationController < Sinatra::Base
     user = User.where(["username=? and password=?", params[:username], params[:password]])[0]
 
     if (user.nil?)
+      status 403
       {error: "Wrong email or password"}.to_json
     else
+      status 200
       session[:user_id] = user.id
       user.to_json
     end
@@ -119,8 +121,10 @@ class ApplicationController < Sinatra::Base
     )
     
     if (user.nil?)
+      status 403
       {error: "Wrong email or password"}.to_json
     else
+      status 201
       session[:user_id] = user.id
       user.to_json
     end
@@ -131,6 +135,8 @@ class ApplicationController < Sinatra::Base
     begin
       authorized
       project = Project.create(project_params)
+
+      status 201
       project.to_json
     rescue ActiveRecord::RecordNotFound => e
       status 401
