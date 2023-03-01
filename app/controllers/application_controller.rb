@@ -23,7 +23,6 @@ class ApplicationController < Sinatra::Base
 
   # GET ---------------------------------------------------------------------------# Add your ro utes here
   def authorized
-    pry
     User.find(session[:user_id])
   end
 
