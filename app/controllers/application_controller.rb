@@ -115,9 +115,9 @@ class ApplicationController < Sinatra::Base
 
   post "/signup" do
     user = User.create(
-      username: "user",
-      email: "user@user.com",
-      password: "password"
+      username: params[:username],
+      email: params[:email],
+      password: params[:password]
     )
     
     if (user.nil?)
