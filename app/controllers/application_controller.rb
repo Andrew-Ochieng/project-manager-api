@@ -164,7 +164,7 @@ class ApplicationController < Sinatra::Base
       project = Project.find(params[:id])
       project.destroy
       
-      head :no_content
+      status 204
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -172,6 +172,13 @@ class ApplicationController < Sinatra::Base
   end
 
   delete "/logout" do
-    session.delete user_id
+    begin
+      authorized
+      session.delete :user_id
+      status 204
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Already logged out"}.to_json
+    end
   end
 end
