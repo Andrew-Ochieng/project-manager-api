@@ -1,6 +1,6 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
-  use Rack::Session::Pool, :expire_after => 259200000000
+  use Rack::Session::Cookie, :expire_after => 259200000000
   
   # To enable cross origin requests for all routes:
   set :bind, '0.0.0.0'
@@ -39,7 +39,7 @@ class ApplicationController < Sinatra::Base
 
   get "/" do
     begin
-      authorized
+      # authorized
       status 200
       { message: "Good luck with your project!" }.to_json
     rescue ActiveRecord::RecordNotFound => e
@@ -50,8 +50,9 @@ class ApplicationController < Sinatra::Base
 
   get "/projects" do
     begin
-      user  = authorized
-      user.projects.to_json
+      # user  = authorized
+      # user.projects.to_json
+      Project.all.to_json
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -60,7 +61,7 @@ class ApplicationController < Sinatra::Base
 
   get "/projects/:id" do
     begin
-      authorized
+      # authorized
       project = Project.find(params[:id])
       project.to_json(only: [:name, :topic, :description, :uploaded_file])
     rescue ActiveRecord::RecordNotFound => e
@@ -71,7 +72,7 @@ class ApplicationController < Sinatra::Base
 
   get "/users" do
     begin
-      authorized
+      # authorized
       status 200
       users = User.all.to_json(except: [:created_at, :updated_at])
     rescue ActiveRecord::RecordNotFound => e
@@ -82,7 +83,7 @@ class ApplicationController < Sinatra::Base
 
   get "/users/:id" do
     begin
-      authorized
+      # authorized
       user = User.find_by(id: params[:id])
 
       if(user.nil?)
