@@ -134,7 +134,7 @@ class ApplicationController < Sinatra::Base
 
   post "/projects" do
     begin
-      authorized
+      # authorized
       project = Project.create(project_params)
 
       status 201
@@ -148,7 +148,7 @@ class ApplicationController < Sinatra::Base
   # PATCH ---------------------------------------------------------------------------
   patch "/projects/:id" do
     begin
-      authorized
+      # authorized
       project = Project.find_by(id: params[:id])
       project.update()
       project.to_json
@@ -161,7 +161,7 @@ class ApplicationController < Sinatra::Base
   # DELETE ---------------------------------------------------------------------------
   delete "/projects/:id" do
     begin
-      authorized
+      # authorized
       project = Project.find(params[:id])
       project.destroy
       
@@ -174,7 +174,7 @@ class ApplicationController < Sinatra::Base
 
   delete "/logout" do
     begin
-      authorized
+      # authorized
       session.delete :user_id
       status 204
     rescue ActiveRecord::RecordNotFound => e
