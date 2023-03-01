@@ -135,7 +135,12 @@ class ApplicationController < Sinatra::Base
   post "/projects" do
     begin
       # authorized
-      project = Project.create(project_params)
+      project = Project.create(
+        name: params[:name],
+        topic: params[:topic],
+        details: params[:details],
+        user_id: params[:user_id]
+      )
 
       status 201
       project.to_json
@@ -150,7 +155,12 @@ class ApplicationController < Sinatra::Base
     begin
       # authorized
       project = Project.find_by(id: params[:id])
-      project.update()
+      project.update(
+        name: params[:name],
+        topic: params[:topic],
+        details: params[:details],
+        user_id: params[:user_id]
+      )
       project.to_json
     rescue ActiveRecord::RecordNotFound => e
       status 401
