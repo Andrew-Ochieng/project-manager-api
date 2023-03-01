@@ -12,7 +12,7 @@ user = User.create(
   Project.create(
     name: Faker::Team.state,
     topic: Faker::Space.galaxy,
-    details: Faker::Lorem.paragraphs(number: 1, supplemental: true),
+    details: Faker::Lorem.paragraph,
     user_id: user.id
   )
 end
