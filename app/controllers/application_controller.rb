@@ -83,7 +83,6 @@ class ApplicationController < Sinatra::Base
   get "/users/:id" do
     begin
       authorized
-      pry
       user = User.find_by(id: params[:id])
 
       if(user.nil?)
