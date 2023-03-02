@@ -165,6 +165,22 @@ class ApplicationController < Sinatra::Base
     end    
   end
 
+  post "/project-memberships" do
+    begin
+      # authorized
+      project_membership = ProjectMembership.create(
+        user_id: params[:user_id],
+        project_id: params[:project_id]
+      )
+
+      status 201
+      project_membership.to_json(include: [:project, :user])
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end    
+  end
+
   # PATCH ---------------------------------------------------------------------------
   patch "/projects/:id" do
     begin
