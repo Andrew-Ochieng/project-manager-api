@@ -73,7 +73,7 @@ class ApplicationController < Sinatra::Base
     begin
       # authorized
       status 200
-      users = User.all.to_json(except: [:created_at, :updated_at], include: projects)
+      User.all.to_json(except: [:created_at, :updated_at], include: [:projects])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
