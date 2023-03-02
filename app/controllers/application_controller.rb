@@ -37,17 +37,6 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  get "/" do
-    begin
-      # authorized
-      status 200
-      { message: "Good luck with your project!" }.to_json
-    rescue ActiveRecord::RecordNotFound => e
-      status 401
-      {error: "Unauthorized"}.to_json
-    end
-  end
-
   get "/my-projects/:id" do
     begin
       user  = User.find(params[:id])
