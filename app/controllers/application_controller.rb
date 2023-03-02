@@ -153,7 +153,7 @@ class ApplicationController < Sinatra::Base
       )
 
       status 201
-      project.to_json
+      project.to_json(include: statuses)
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -188,7 +188,7 @@ class ApplicationController < Sinatra::Base
         details: params[:details],
         user_id: params[:user_id]
       )
-      project.to_json
+      project.to_json(include: statuses)
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
