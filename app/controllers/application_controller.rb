@@ -48,11 +48,21 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get "/my-projects/:id" do
+    begin
+      user  = User.find(params[:id])
+      user.projects.to_json(include: [:statuses])
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end   
+  end
+
   get "/projects" do
     begin
       # user  = authorized
       # user.projects.to_json
-      Project.all.to_json
+      Project.all.to_json(include: [:statuses])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -63,7 +73,7 @@ class ApplicationController < Sinatra::Base
     begin
       # authorized
       project = Project.find(params[:id])
-      project.to_json(only: [:name, :topic, :description, :uploaded_file])
+      project.to_json(include: [:statuses])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
