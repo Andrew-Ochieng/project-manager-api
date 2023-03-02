@@ -20,13 +20,22 @@ users = []
 end
 
 puts "2. Create projects"
+5.times do
+  Project.create(
+    name: Faker::Team.state,
+    topic: Faker::Space.galaxy,
+    details: Faker::Lorem.paragraph,
+    user_id: user.id
+  )
+end
+
 projects = []
 20.times do
   projects << Project.create(
     name: Faker::Team.state,
     topic: Faker::Space.galaxy,
     details: Faker::Lorem.paragraph,
-    user_id: user.id
+    user_id: users.sample.id
   )
 end
 
