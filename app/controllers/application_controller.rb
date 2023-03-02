@@ -209,6 +209,19 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  delete "/status/:id" do
+    begin
+      # authorized
+      curr_status = Status.find(params[:id])
+      curr_status.destroy
+      
+      status 204
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
+  end
+
   delete "/logout" do
     begin
       # authorized
