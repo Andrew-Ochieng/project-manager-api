@@ -160,7 +160,7 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  post "/status" do
+  post "/statuses" do
     begin
       # authorized
       Status.create(
@@ -195,6 +195,22 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  patch "/statuses/:id" do
+    begin
+      # authorized
+      project_status = Status.find_by(id: params[:id])
+      project_status.update(
+        summary: params[:summary],
+        details: params[:details],
+        project_id: params[:project_id]
+      )
+      project_status.to_json(include: statuses)
+    rescue ActiveRecord::RecordNotFound => e
+      status 401
+      {error: "Unauthorized"}.to_json
+    end
+  end
+
   # DELETE ---------------------------------------------------------------------------
   delete "/projects/:id" do
     begin
@@ -209,11 +225,11 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  delete "/status/:id" do
+  delete "/statuses/:id" do
     begin
       # authorized
-      curr_status = Status.find(params[:id])
-      curr_status.destroy
+      project_status = Status.find(params[:id])
+      project_status.destroy
       
       status 204
     rescue ActiveRecord::RecordNotFound => e
