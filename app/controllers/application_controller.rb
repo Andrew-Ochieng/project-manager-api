@@ -40,7 +40,7 @@ class ApplicationController < Sinatra::Base
   get "/my-projects/:id" do
     begin
       user  = User.find(params[:id])
-      user.projects.to_json(include: [:statuses])
+      user.projects.to_json(include: [:statuses, :users])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -51,7 +51,7 @@ class ApplicationController < Sinatra::Base
     begin
       # user  = authorized
       # user.projects.to_json
-      Project.all.to_json(include: [:statuses])
+      Project.all.to_json(include: [:statuses, :users])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -62,7 +62,7 @@ class ApplicationController < Sinatra::Base
     begin
       # authorized
       project = Project.find(params[:id])
-      project.to_json(include: [:statuses])
+      project.to_json(include: [:statuses, :users])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -73,7 +73,7 @@ class ApplicationController < Sinatra::Base
     begin
       # authorized
       status 200
-      users = User.all.to_json(except: [:created_at, :updated_at])
+      users = User.all.to_json(except: [:created_at, :updated_at], include: projects)
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -90,7 +90,7 @@ class ApplicationController < Sinatra::Base
         {error: "User not found"}.to_json
       else
         status 200
-        user.to_json
+        user.to_json(include: [:projects])
       end
     rescue ActiveRecord::RecordNotFound => e
       status 401
@@ -138,11 +138,10 @@ class ApplicationController < Sinatra::Base
         name: params[:name],
         topic: params[:topic],
         details: params[:details],
-        user_id: params[:user_id]
       )
 
       status 201
-      project.to_json(include: statuses)
+      project.to_json(include: [:statuses, :users])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
@@ -177,7 +176,7 @@ class ApplicationController < Sinatra::Base
         details: params[:details],
         user_id: params[:user_id]
       )
-      project.to_json(include: statuses)
+      project.to_json(include: [:statuses, :users])
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
