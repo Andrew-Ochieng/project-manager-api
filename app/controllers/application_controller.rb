@@ -151,14 +151,14 @@ class ApplicationController < Sinatra::Base
   post "/statuses" do
     begin
       # authorized
-      Status.create(
+      project_status = Status.create(
         summary: params[:summary],
         details: params[:details],
         project_id: params[:project_id]
       )
 
       status 201
-      project.to_json(include: statuses)
+      project_status.to_json
     rescue ActiveRecord::RecordNotFound => e
       status 401
       {error: "Unauthorized"}.to_json
